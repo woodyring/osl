@@ -1,0 +1,5 @@
+libosl (0.2.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: #564231)
+
+ -- Daigo Moriwaki <daigo@debian.org>  Sat, 09 Jan 2010 00:02:46 +0900

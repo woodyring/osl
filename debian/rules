@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+DEB_MAKE_CLEAN_TARGET   = clean
+DEB_MAKE_BUILD_TARGET   = all
+DEB_MAKE_INSTALL_TARGET = 
+DEB_MAKE_CHECK_TARGET   =
+
+so_ver=1
+
+DEB_DBG_PACKAGE_libosl$(so_ver) = libosl$(so_ver)-dbg
+
+DEB_INSTALL_DIRS_libosl$(so_ver) += usr/lib
+
+DEB_INSTALL_DIRS_libosl-dev += usr/lib usr/include usr/share/libosl-dev
+
+DEB_INSTALL_DIRS_libosl-doc += usr/share/doc/libosl-doc
+DEB_INSTALL_DOCS_libosl-doc += doc/html
+
+pre-build::
+	cp $(CURDIR)/debian/makefile.local.$(DEB_HOST_ARCH_CPU) $(CURDIR)/makefile.local
+
+build/libosl$(so_ver)::
+	$(MAKE) -C release-so make-directories
+	$(MAKE) -C release-so PROF=-g OSL_HOME_FLAGS=-DOSL_HOME=\\\"/usr/share/gpsshogi-data\\\" libosl.so.$(so_ver).0
+
+binary-install/libosl$(so_ver)::
+	dh_install -p$(cdbs_curpkg) --sourcedir=release-so libosl.so.* usr/lib
+
+build/libosl-dev::
+	$(MAKE) -C release make-directories
+	$(MAKE) -C release PROF=-g OSL_HOME_FLAGS=-DOSL_HOME=\\\"/usr/share/gpsshogi-data\\\" all
+
+binary-install/libosl-dev::
+	dh_install -p$(cdbs_curpkg) --sourcedir=release lib*.a usr/lib
+	dh_install -p$(cdbs_curpkg) --sourcedir=release-so libosl.so usr/lib
+	dh_install -p$(cdbs_curpkg) --sourcedir=include -X.svn osl usr/include
+	dh_install -p$(cdbs_curpkg) --sourcedir=$(CURDIR) makefile.conf makefile.local \
+	  usr/share/$(cdbs_curpkg)
+
+build/libosl-doc::
+	$(MAKE) -C doc 
+
+clean::
+	-$(MAKE) -C release clean
+	-$(MAKE) -C release-so clean
+	-$(MAKE) -C doc clean
+	-rm -f $(CURDIR)/makefile.local

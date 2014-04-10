@@ -1,0 +1,70 @@
+How to compile using Mingw
+==========================
+
+Setup Mingw
+-----------
+
+Mingw cross compile on Debian/Linux, targeting to Windows.
+
+* Install mingw
+
+$ sudo aptitude install mingw-w64-dev
+$ cp ./Toolchain-i686-mingw32.cmake.sample ~/Toolchain-i686-mingw32.cmake
+
+
+Build dependencies
+------------------
+
+1. Bzip
+
+- ~/local/src/bzip2-1.0.6
+- http://www.bzip.org/
+- vim Makefile
+  CC=i686-w64-mingw32-gcc
+  AR=i686-w64-mingw32-ar
+  RANLIB=i686-w64-mingw32-ranlib
+  LDFLAGS=-Wl,-s
+- % vim bzip2.c
+  Replace with sys/stat.h
+% make CFLAGS="-O2 -march=pentium4 -pipe -fomit-frame-pointer -ffast-math -D_FILE_OFFSET_BITS=64" LDFALGS="-Wl,-s"
+% mkdir target
+% make install PREFIX=target
+% sudo cp target/include/bzlib.h /usr/i686-w64-mingw32/include
+% sudo cp target/lib/libbz2.a /usr/i686-w64-mingw32/lib
+
+
+2. Boost 1.46.1
+
+- ~/local/src/boost_1_46_1
+% chmod 755 */.sh
+% cat ./user-config.jam
+    using gcc : 4.6 : i686-w64-mingw32-g++ :
+      <rc>/usr/bin/i686-w64-mingw32-windres
+      <archiver>/usr/bin/i686-w64-mingw32-ar ;
+% ./bootstrap.sh --without-icu
+% ./bjam -j4 toolset=gcc target-os=windows variant=release threading=multi threadapi=win32 --without-mpi --without-python -sNO_ZLIB=1 -sNO_BZIP2=0 --layout=tagged --user-config=user-config.jam 2>&1 | tee mingw.log
+% cd stage/lib
+% i686-w64-mingw32-ranlib *.a
+
+
+Build OSL
+---------
+
+$ cd /path/to/osl
+$ mkdir mingw-release & cd mingw-release
+$ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/Toolchain-i686-mingw32.cmake -DCMAKE_BUILD_TYPE:STRING=Release ..
+$ make
+
+
+Build GPS
+---------
+$ cd /path/to/gpsshogi/bin
+$ mkdir mingw-release & cd mingw-release
+$ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/Toolchain-i686-mingw32.cmake -DCMAKE_BUILD_TYPE:STRING=Release ..
+$ make
+$ make package
+
+
+---
+2011-07-31  Daigo Moriwaki <daigo at debian dot org>
+
