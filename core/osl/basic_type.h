@@ -648,6 +648,13 @@ namespace osl
       return *this;
     }
 
+#if 1
+    Square& operator--(int) {
+      square -= 1;
+      return *this;
+    }
+#endif
+
     static int reverseX(int x) { return 10-x; }
     static int reverseY(int y) { return 10-y; }
   public:
@@ -1069,6 +1076,26 @@ namespace osl
      * 重複して手を生成することがある場合は，600では不足かもしれない
      */
     static const unsigned int MaxUniqMoves=600;
+#if 1 //def GPSFISH_NEW
+    inline operator bool () const { return  isValid(); }
+    inline operator int  () const { return  move; }
+    inline Move & operator = ( const int m ) {
+        move = m;
+        return *this;
+    }
+    inline Move & operator = ( Move const & m ) {
+        move = m.move;
+        return *this;
+    }
+    inline Move & operator = ( const volatile Move & m ) {
+        move = m.move;
+        return *this;
+    }
+    inline volatile Move & operator = ( const Move & m ) volatile {
+        move = m.move;
+        return *this;
+    }
+#endif
   private:
     void init(Square from, Square to, Ptype ptype,
 	      Ptype capture_ptype, bool is_promote, Player player)
