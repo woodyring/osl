@@ -66,6 +66,7 @@ else()
 endif()
 
 include_directories ("${PROJECT_SOURCE_DIR}/core")
+#include_directories ("${PROJECT_SOURCE_DIR}/std")
 
 ## Pthreads
 #find_package (Threads)
@@ -94,6 +95,8 @@ endif()
 ## Program SampleCounter
 file(GLOB_RECURSE OSL_HEADERS  core/*.h core/*.tcc)
 file(GLOB_RECURSE OSL_SRCS     core/osl/*.cc)
+#file(GLOB_RECURSE OSL_HEADERS  std/*.h std/*.tcc)
+#file(GLOB_RECURSE OSL_SRCS     std/osl/*.cc)
 #file(GLOB_RECURSE EXCLUDE_SRCS lib/third_party/*.cc lib/ntesuki/*.cc)
 #list(REMOVE_ITEM OSL_SRCS ${EXCLUDE_SRCS})
 #message (STATUS "Headers: ${OSL_HEADERS}")
