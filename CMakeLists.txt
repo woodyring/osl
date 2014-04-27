@@ -1,5 +1,7 @@
 project (osl CXX)
 
+set (USE_STD TRUE)
+
 # Tweak build mode
 if(NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
@@ -66,7 +68,9 @@ else()
 endif()
 
 include_directories ("${PROJECT_SOURCE_DIR}/core")
-#include_directories ("${PROJECT_SOURCE_DIR}/std")
+if (USE_STD)
+  include_directories ("${PROJECT_SOURCE_DIR}/std")
+endif()
 
 ## Pthreads
 #find_package (Threads)
@@ -93,10 +97,13 @@ else()
 endif()
 
 ## Program SampleCounter
-file(GLOB_RECURSE OSL_HEADERS  core/*.h core/*.tcc)
-file(GLOB_RECURSE OSL_SRCS     core/osl/*.cc)
-#file(GLOB_RECURSE OSL_HEADERS  std/*.h std/*.tcc)
-#file(GLOB_RECURSE OSL_SRCS     std/osl/*.cc)
+if( USE_STD )
+  file(GLOB_RECURSE OSL_HEADERS  core/*.h core/*.tcc std/*.h std/*.tcc)
+  file(GLOB_RECURSE OSL_SRCS     core/osl/*.cc std/osl/*.cc)
+else()
+  file(GLOB_RECURSE OSL_HEADERS  core/*.h core/*.tcc)
+  file(GLOB_RECURSE OSL_SRCS     core/osl/*.cc)
+endif()
 #file(GLOB_RECURSE EXCLUDE_SRCS lib/third_party/*.cc lib/ntesuki/*.cc)
 #list(REMOVE_ITEM OSL_SRCS ${EXCLUDE_SRCS})
 #message (STATUS "Headers: ${OSL_HEADERS}")

@@ -10,6 +10,9 @@ release
 *.a
 *.pb.h
 *.pb.cc
+*.patch
+G*
+mingw*
 .deps
 build
 dist

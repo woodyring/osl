@@ -649,6 +649,10 @@ namespace osl
     }
 
 #if 1
+    Square& operator--() {
+      square -= 1;
+      return *this;
+    }
     Square& operator--(int) {
       square -= 1;
       return *this;
